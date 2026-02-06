@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Plus } from "lucide-react";
 import type { Divider } from "@/types/todo";
 import { getIconComponent } from "@/lib/icons";
 
 interface TodoDividerProps {
   divider: Divider;
   onDelete: (id: string) => void;
+  onAddTodo: (dividerId: string) => void;
 }
 
-const TodoDivider = ({ divider, onDelete }: TodoDividerProps) => {
+const TodoDivider = ({ divider, onDelete, onAddTodo }: TodoDividerProps) => {
   const IconComponent = getIconComponent(divider.icon);
 
   return (
@@ -18,6 +19,15 @@ const TodoDivider = ({ divider, onDelete }: TodoDividerProps) => {
       </div>
       <h3 className="text-lg font-semibold text-foreground">{divider.name}</h3>
       <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={() => onAddTodo(divider.id)}
+        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary hover:bg-primary/20"
+        title="Add habit"
+      >
+        <Plus className="h-4 w-4" />
+      </Button>
       <Button
         size="icon"
         variant="ghost"
