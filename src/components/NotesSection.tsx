@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import MoodSelector from "./MoodSelector";
+import MoodSelector, { getMoodSuggestion } from "./MoodSelector";
 import NoteEntry from "./NoteEntry";
 import type { MoodNote, MoodType } from "@/types/todo";
 
@@ -166,7 +166,7 @@ const NotesSection = ({ notes, onAddNote, onEditNote, onDeleteNote }: NotesSecti
             <Textarea
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
-              placeholder="What's on your mind?"
+              placeholder={selectedMood ? `${getMoodSuggestion(selectedMood)}...` : "What's on your mind?"}
               className="bg-secondary/50 border-primary/30 focus:border-primary resize-none"
               rows={3}
             />

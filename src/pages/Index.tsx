@@ -9,6 +9,7 @@ import AddButton from "@/components/AddButton";
 import ComingSoon from "@/components/ComingSoon";
 import AddTodoDialog from "@/components/AddTodoDialog";
 import AddDividerDialog from "@/components/AddDividerDialog";
+import AIChat from "@/components/AIChat";
 import NotesSection from "@/components/NotesSection";
 import type { Todo, Divider, MoodNote, MoodType } from "@/types/todo";
 
@@ -210,6 +211,8 @@ const Index = () => {
             onEditNote={handleEditNote}
             onDeleteNote={handleDeleteNote}
           />
+        ) : activeTab === "ai" ? (
+          <AIChat todos={todos} dividers={dividers} notes={notes} />
         ) : (
           <ComingSoon section={activeTab} />
         )}
