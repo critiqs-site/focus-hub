@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,12 +24,22 @@ interface AddTodoDialogProps {
   onOpenChange: (open: boolean) => void;
   onAdd: (text: string, dividerId: string, icon: string) => void;
   dividers: Divider[];
+  preselectedDividerId?: string | null;
 }
 
-const AddTodoDialog = ({ open, onOpenChange, onAdd, dividers }: AddTodoDialogProps) => {
+const AddTodoDialog = ({ open, onOpenChange, onAdd, dividers, preselectedDividerId }: AddTodoDialogProps) => {
   const [text, setText] = useState("");
-  const [dividerId, setDividerId] = useState(dividers[0]?.id || "");
+  const [dividerId, setDividerId] = useState(preselectedDividerId || dividers[0]?.id || "");
   const [selectedIcon, setSelectedIcon] = useState("PersonStanding");
+
+  // Update dividerId when preselectedDividerId changes or dialog opens
+  useEffect(() => {
+    if (open && preselectedDividerId) {
+      setDividerId(preselectedDividerId);
+    } else if (open && !preselectedDividerId && dividers[0]) {
+      setDividerId(dividers[0].id);
+    }
+  }, [open, preselectedDividerId, dividers]);
 
   const handleSubmit = () => {
     if (text.trim() && dividerId) {

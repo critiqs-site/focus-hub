@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import Header from "@/components/Header";
 import DateDisplay from "@/components/DateDisplay";
 import TodoItem from "@/components/TodoItem";
 import TodoDivider from "@/components/TodoDivider";
-import AddButton from "@/components/AddButton";
 import ComingSoon from "@/components/ComingSoon";
 import AddTodoDialog from "@/components/AddTodoDialog";
 import AddDividerDialog from "@/components/AddDividerDialog";
@@ -25,6 +24,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("todos");
   const [showAddTodo, setShowAddTodo] = useState(false);
   const [showAddDivider, setShowAddDivider] = useState(false);
+  const [selectedDividerId, setSelectedDividerId] = useState<string | null>(null);
 
   const {
     todos,
@@ -120,7 +120,14 @@ const Index = () => {
                 const dividerTodos = todos.filter((t) => t.dividerId === divider.id);
                 return (
                   <div key={divider.id} style={{ animationDelay: `${0.2 + index * 0.1}s` }}>
-                    <TodoDivider divider={divider} onDelete={handleDeleteDivider} />
+                    <TodoDivider 
+                      divider={divider} 
+                      onDelete={handleDeleteDivider}
+                      onAddTodo={(dividerId) => {
+                        setSelectedDividerId(dividerId);
+                        setShowAddTodo(true);
+                      }}
+                    />
                     {dividerTodos.length > 0 ? (
                       <div className="space-y-3">
                         {dividerTodos.map((todo) => (
@@ -142,20 +149,27 @@ const Index = () => {
                 );
               })}
 
-              {/* Inline Add Button */}
-              <div className="pt-4">
-                <AddButton
-                  onAddTodo={() => setShowAddTodo(true)}
-                  onAddDivider={() => setShowAddDivider(true)}
-                />
-              </div>
+              {/* Add Section Button */}
+              <button
+                onClick={() => setShowAddDivider(true)}
+                className="w-full glass-card border-dashed border-2 border-primary/30 hover:border-primary/60 p-4 flex items-center justify-center gap-2 transition-all duration-300 hover:bg-primary/5 cursor-pointer group mt-6"
+              >
+                <Plus className="h-5 w-5 text-primary" />
+                <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  Add Section
+                </span>
+              </button>
             </div>
 
             <AddTodoDialog
               open={showAddTodo}
-              onOpenChange={setShowAddTodo}
+              onOpenChange={(open) => {
+                setShowAddTodo(open);
+                if (!open) setSelectedDividerId(null);
+              }}
               onAdd={handleAddTodo}
               dividers={dividers}
+              preselectedDividerId={selectedDividerId}
             />
 
             <AddDividerDialog
