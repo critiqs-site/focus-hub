@@ -191,5 +191,6 @@ export const useTodos = (userId: string | undefined) => {
     handleAddTodo,
     handleAddDivider,
     handleDeleteDivider,
+    refetch: fetchData,
   };
 };

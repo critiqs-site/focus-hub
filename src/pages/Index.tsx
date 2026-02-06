@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import DateDisplay from "@/components/DateDisplay";
 import TodoItem from "@/components/TodoItem";
@@ -11,14 +11,17 @@ import AddTodoDialog from "@/components/AddTodoDialog";
 import AddDividerDialog from "@/components/AddDividerDialog";
 import AIChat from "@/components/AIChat";
 import NotesSection from "@/components/NotesSection";
-import { Button } from "@/components/ui/button";
+import OnboardingDialog from "@/components/OnboardingDialog";
+import UserProfileMenu from "@/components/UserProfileMenu";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
 import { useTodos } from "@/hooks/useTodos";
 import { useNotes } from "@/hooks/useNotes";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
+  const { profile, needsOnboarding, completeOnboarding } = useProfile(user?.id);
   const [activeTab, setActiveTab] = useState("todos");
   const [showAddTodo, setShowAddTodo] = useState(false);
   const [showAddDivider, setShowAddDivider] = useState(false);
@@ -33,6 +36,7 @@ const Index = () => {
     handleAddTodo,
     handleAddDivider,
     handleDeleteDivider,
+    refetch: refetchTodos,
   } = useTodos(user?.id);
 
   const {
@@ -65,6 +69,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Onboarding Dialog */}
+      <OnboardingDialog
+        open={needsOnboarding}
+        userId={user.id}
+        onComplete={() => {
+          completeOnboarding();
+          refetchTodos();
+        }}
+      />
+
       {/* Subtle smoke/gradient background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
@@ -72,17 +86,13 @@ const Index = () => {
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
-        {/* Sign out button */}
+        {/* User Profile Menu */}
         <div className="flex justify-end mb-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={signOut}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign out
-          </Button>
+          <UserProfileMenu
+            email={user.email || ""}
+            name={profile?.name || undefined}
+            onSignOut={signOut}
+          />
         </div>
 
         <Header activeTab={activeTab} onTabChange={setActiveTab} />
