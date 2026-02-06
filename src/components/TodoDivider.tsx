@@ -23,7 +23,7 @@ const TodoDivider = ({ divider, onDelete, onAddTodo }: TodoDividerProps) => {
         size="icon"
         variant="ghost"
         onClick={() => onAddTodo(divider.id)}
-        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary hover:bg-primary/20"
+        className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/20 md:opacity-60 md:group-hover:opacity-100 transition-opacity"
         title="Add habit"
       >
         <Plus className="h-4 w-4" />
@@ -32,7 +32,7 @@ const TodoDivider = ({ divider, onDelete, onAddTodo }: TodoDividerProps) => {
         size="icon"
         variant="ghost"
         onClick={() => onDelete(divider.id)}
-        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/20"
+        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/20 md:opacity-60 md:group-hover:opacity-100 transition-opacity"
       >
         <Trash2 className="h-4 w-4" />
       </Button>
