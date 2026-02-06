@@ -95,6 +95,36 @@
     animation: staggerIn 0.5s ease-out forwards;
   }
 
+  .animate-bounce-slow {
+    animation: bounceSlow 3s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 4s ease-in-out infinite 1s;
+  }
+
+  .animate-wave {
+    animation: wave 1.5s ease-in-out infinite;
+    transform-origin: 70% 70%;
+    display: inline-block;
+  }
+
+  .animate-wave-arm {
+    animation: waveArm 1s ease-in-out infinite;
+  }
+
+  .animate-bounce-gentle {
+    animation: bounceGentle 2s ease-in-out infinite;
+  }
+
+  .animate-blink {
+    animation: blink 3s ease-in-out infinite;
+  }
+
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -130,5 +160,36 @@
       opacity: 1;
       transform: translateX(0);
     }
+  }
+
+  @keyframes bounceSlow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.1); }
+  }
+
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(20deg); }
+    75% { transform: rotate(-15deg); }
+  }
+
+  @keyframes waveArm {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(20deg); }
+  }
+
+  @keyframes bounceGentle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
   }
 }

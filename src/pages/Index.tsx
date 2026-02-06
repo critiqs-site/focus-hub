@@ -12,6 +12,7 @@ import AIChat from "@/components/AIChat";
 import NotesSection from "@/components/NotesSection";
 import OnboardingDialog from "@/components/OnboardingDialog";
 import UserProfileMenu from "@/components/UserProfileMenu";
+import AnalyticsView from "@/components/AnalyticsView";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { useTodos } from "@/hooks/useTodos";
@@ -178,6 +179,8 @@ const Index = () => {
               onAdd={handleAddDivider}
             />
           </>
+        ) : activeTab === "analytics" ? (
+          <AnalyticsView todos={todos} dividers={dividers} />
         ) : activeTab === "notes" ? (
           <NotesSection
             notes={notes}
