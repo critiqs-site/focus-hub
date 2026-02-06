@@ -14,7 +14,104 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      dividers: {
+        Row: {
+          created_at: string
+          icon: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mood_notes: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          mood: string
+          note: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          mood: string
+          note?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          mood?: string
+          note?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      todos: {
+        Row: {
+          completions: string[]
+          created_at: string
+          divider_id: string
+          icon: string
+          id: string
+          text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completions?: string[]
+          created_at?: string
+          divider_id: string
+          icon?: string
+          id?: string
+          text: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completions?: string[]
+          created_at?: string
+          divider_id?: string
+          icon?: string
+          id?: string
+          text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "todos_divider_id_fkey"
+            columns: ["divider_id"]
+            isOneToOne: false
+            referencedRelation: "dividers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

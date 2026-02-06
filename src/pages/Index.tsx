@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { toast } from "sonner";
-import { format, addDays, isAfter, isSameDay } from "date-fns";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { LogOut, Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import DateDisplay from "@/components/DateDisplay";
 import TodoItem from "@/components/TodoItem";
@@ -11,125 +11,57 @@ import AddTodoDialog from "@/components/AddTodoDialog";
 import AddDividerDialog from "@/components/AddDividerDialog";
 import AIChat from "@/components/AIChat";
 import NotesSection from "@/components/NotesSection";
-import type { Todo, Divider, MoodNote, MoodType } from "@/types/todo";
-
-const initialDividers: Divider[] = [
-  { id: "morning", name: "Morning", icon: "Sun" },
-  { id: "night", name: "Night", icon: "Moon" },
-];
-
-const today = format(new Date(), 'yyyy-MM-dd');
-
-const initialTodos: Todo[] = [
-  { id: "1", text: "Workout for 30 Minutes", dividerId: "morning", icon: "Dumbbell", createdAt: today, completions: [] },
-  { id: "2", text: "Meditate for 10 Minutes", dividerId: "morning", icon: "PersonStanding", createdAt: today, completions: [] },
-  { id: "3", text: "Read Before Sleep", dividerId: "night", icon: "BookOpen", createdAt: today, completions: [] },
-];
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useTodos } from "@/hooks/useTodos";
+import { useNotes } from "@/hooks/useNotes";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState("todos");
-  const [todos, setTodos] = useState<Todo[]>(initialTodos);
-  const [dividers, setDividers] = useState<Divider[]>(initialDividers);
-  const [notes, setNotes] = useState<MoodNote[]>([]);
   const [showAddTodo, setShowAddTodo] = useState(false);
   const [showAddDivider, setShowAddDivider] = useState(false);
 
-  const handleToggleDay = (id: string, dayIndex: number) => {
-    setTodos((prev) =>
-      prev.map((t) => {
-        if (t.id !== id) return t;
+  const {
+    todos,
+    dividers,
+    loading: todosLoading,
+    handleToggleDay,
+    handleEdit,
+    handleDelete,
+    handleAddTodo,
+    handleAddDivider,
+    handleDeleteDivider,
+  } = useTodos(user?.id);
 
-        const targetDate = addDays(new Date(t.createdAt), dayIndex);
-        const todayDate = new Date();
+  const {
+    notes,
+    loading: notesLoading,
+    handleAddNote,
+    handleEditNote,
+    handleDeleteNote,
+  } = useNotes(user?.id);
 
-        // Prevent toggling future dates
-        if (isAfter(targetDate, todayDate) && !isSameDay(targetDate, todayDate)) {
-          return t;
-        }
-
-        const dateStr = format(targetDate, 'yyyy-MM-dd');
-
-        if (t.completions.includes(dateStr)) {
-          return { ...t, completions: t.completions.filter(d => d !== dateStr) };
-        } else {
-          return { ...t, completions: [...t.completions, dateStr] };
-        }
-      })
-    );
-  };
-
-  const handleEdit = (id: string, text: string) => {
-    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, text } : t)));
-    toast.success("Habit updated");
-  };
-
-  const handleDelete = (id: string) => {
-    setTodos((prev) => prev.filter((t) => t.id !== id));
-    toast.success("Habit deleted");
-  };
-
-  const handleAddTodo = (text: string, dividerId: string, icon: string) => {
-    const newTodo: Todo = {
-      id: Date.now().toString(),
-      text,
-      dividerId,
-      icon,
-      createdAt: format(new Date(), 'yyyy-MM-dd'),
-      completions: [],
-    };
-    setTodos((prev) => [...prev, newTodo]);
-    toast.success("Habit added");
-  };
-
-  const handleAddDivider = (name: string, icon: string) => {
-    const newDivider: Divider = {
-      id: Date.now().toString(),
-      name,
-      icon,
-    };
-    setDividers((prev) => [...prev, newDivider]);
-    toast.success("Section added");
-  };
-
-  const handleDeleteDivider = (id: string) => {
-    setDividers((prev) => prev.filter((d) => d.id !== id));
-    setTodos((prev) => prev.filter((t) => t.dividerId !== id));
-    toast.success("Section and its habits deleted");
-  };
-
-  const handleAddNote = (date: string, mood: MoodType, note: string) => {
-    const existingIndex = notes.findIndex(n => n.date === date);
-    if (existingIndex >= 0) {
-      // Update existing
-      setNotes(prev => prev.map((n, i) =>
-        i === existingIndex ? { ...n, mood, note } : n
-      ));
-      toast.success("Entry updated");
-    } else {
-      // Add new
-      const newNote: MoodNote = {
-        id: Date.now().toString(),
-        date,
-        mood,
-        note,
-        createdAt: new Date().toISOString(),
-      };
-      setNotes(prev => [...prev, newNote]);
-      toast.success("Entry saved");
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth");
     }
-  };
+  }, [user, authLoading, navigate]);
 
-  const handleEditNote = (id: string, mood: MoodType, note: string) => {
-    setNotes(prev => prev.map(n =>
-      n.id === id ? { ...n, mood, note } : n
-    ));
-    toast.success("Entry updated");
-  };
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
-  const handleDeleteNote = (id: string) => {
-    setNotes(prev => prev.filter(n => n.id !== id));
-    toast.success("Entry deleted");
-  };
+  if (!user) {
+    return null;
+  }
+
+  const isLoading = todosLoading || notesLoading;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -140,18 +72,36 @@ const Index = () => {
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
+        {/* Sign out button */}
+        <div className="flex justify-end mb-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={signOut}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Sign out
+          </Button>
+        </div>
+
         <Header activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {activeTab === "todos" ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : activeTab === "todos" ? (
           <>
             {todos.length > 0 && (
-              <DateDisplay 
+              <DateDisplay
                 weekStart={new Date(
-                  todos.reduce((oldest, todo) => 
-                    todo.createdAt < oldest ? todo.createdAt : oldest, 
+                  todos.reduce(
+                    (oldest, todo) =>
+                      todo.createdAt < oldest ? todo.createdAt : oldest,
                     todos[0].createdAt
                   )
-                )} 
+                )}
               />
             )}
 
