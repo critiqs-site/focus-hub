@@ -143,7 +143,16 @@ const Index = () => {
 
         {activeTab === "todos" ? (
           <>
-            <DateDisplay />
+            {todos.length > 0 && (
+              <DateDisplay 
+                weekStart={new Date(
+                  todos.reduce((oldest, todo) => 
+                    todo.createdAt < oldest ? todo.createdAt : oldest, 
+                    todos[0].createdAt
+                  )
+                )} 
+              />
+            )}
 
             <div className="space-y-4">
               {dividers.map((divider, index) => {

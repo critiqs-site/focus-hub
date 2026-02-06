@@ -26,6 +26,8 @@ const NotesSection = ({ notes, onAddNote, onEditNote, onDeleteNote }: NotesSecti
   const today = new Date();
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
   const isFutureDate = isAfter(selectedDate, today) && !isSameDay(selectedDate, today);
+  const isPastDate = !isSameDay(selectedDate, today) && !isFutureDate;
+  const isToday = isSameDay(selectedDate, today);
 
   // Check if there's already an entry for this date
   const existingNote = notes.find(n => n.date === dateStr);
@@ -129,19 +131,25 @@ const NotesSection = ({ notes, onAddNote, onEditNote, onDeleteNote }: NotesSecti
       {isFutureDate ? (
         <div className="glass-card p-6 text-center animate-fade-in">
           <p className="text-muted-foreground">
-            You can only log mood for today or past days
+            You cannot log mood for future dates
           </p>
         </div>
       ) : existingNote ? (
         <div className="glass-card p-6 animate-fade-in">
           <p className="text-sm text-muted-foreground text-center mb-4">
-            You already logged your mood for this day
+            {isToday ? "Today's entry" : "Entry for this day"}
           </p>
           <NoteEntry
             note={existingNote}
             onEdit={onEditNote}
             onDelete={onDeleteNote}
           />
+        </div>
+      ) : isPastDate ? (
+        <div className="glass-card p-6 text-center animate-fade-in">
+          <p className="text-muted-foreground">
+            No entry for this day. You can only add notes for today.
+          </p>
         </div>
       ) : (
         <div className="glass-card p-6 space-y-4 animate-fade-in">
